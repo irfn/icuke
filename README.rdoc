@@ -18,6 +18,43 @@ Write some scenarios like:
     When I tap "About"
     Then I should see "Author:"
 
+
+=== Compatibility Mode
+
+By default iCuke adds methods to the World object in which cucumber scenarios run.
+
+This makes it easy to do things like this in your step definitions:
+
+  Given /^the user is logged in$/ do
+    type "username", "test_user"
+    type "password", "test_password"
+  end
+
+In adding things to the World object, however, you may end up stomping on
+methods that come from other places.  For example, Capybara defines a #drag 
+method for the World object, and so does ICuke.  This makes it impossbile
+to use them together.  Another example is the #tap method in 
+ICuke which conflicts with Ruby 1.9.X's Object#tap method.
+
+In order to solve this instead of:
+  
+  require 'icuke/cucumber'
+
+do
+
+  require 'icuke/cucumber_compat'
+
+By doing this each of the methods provided by the api will be scoped
+to an icuke_driver object.  #tap becomes icuke_driver.tap, #drag becomes 
+icuke_driver.drag, #type becomes icuke_driver.type etc.  The example 
+above would become:
+
+  Given /^the user is logged in$/ do
+    icuke_driver.type "username", "test_user"
+    icuke_driver.type "password", "test_password"
+  end
+
+
 == How it works
 
 iCuke launches your application into the iPhone Simulator. A preload library is used to add a HTTP server into your

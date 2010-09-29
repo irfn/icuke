@@ -5,9 +5,11 @@ those provided for testing web applications.
 
 == Usage
 
-Install the gem and load the iCuke step definitions in a cucumber support file:
+Install the gem, require it, and extend your cucumber World object with
+the iCuke step definitions, in a cucumber support file:
 
-require 'icuke/cucumber'
+  require 'icuke/cucumber'
+  World(ICukeWorld)
 
 Write some scenarios like:
 
@@ -39,10 +41,12 @@ ICuke which conflicts with Ruby 1.9.X's Object#tap method.
 In order to solve this instead of:
   
   require 'icuke/cucumber'
+  World(ICukeWorld)
 
 do
 
   require 'icuke/cucumber_compat'
+  World(ICukeWorld)
 
 By doing this each of the methods provided by the api will be scoped
 to an icuke_driver object.  #tap becomes icuke_driver.tap, #drag becomes 

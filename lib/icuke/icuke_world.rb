@@ -16,7 +16,11 @@ module ICukeWorld
   end
 end
 
-Given /^(?:"([^\"]*)" from )?"([^\"]*)"(?: with build configuration "([^\"]*)")? is loaded in the (?:(iphone|ipad) )?simulator(?: with SDK ([0-9.]+))?$/ do |target, project, configuration, platform, sdk_version|
+After do
+  icuke_driver.quit
+end
+
+Given /^(?:"([^\"]*)" from )?"([^\"]*)" is loaded in the (?:(iphone|ipad) )?simulator(?: with SDK ([0-9.]+))?$/ do |target, project, platform, sdk_version|
   if sdk_version
     ICuke::SDK.use(sdk_version)
   elsif platform

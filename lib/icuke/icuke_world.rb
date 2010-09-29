@@ -55,6 +55,10 @@ When /^I tap "([^\"]*)"$/ do |label|
   icuke_driver.tap(label)
 end
 
+When /^I tap (\d+),(\d+)$/ do |x,y|
+  icuke_driver.tap_at_point(x.to_i, y.to_i)
+end
+
 When /^I type "([^\"]*)" in "([^\"]*)"$/ do |text, textfield|
   icuke_driver.type(textfield, text)
 end

@@ -68,7 +68,7 @@ When /^I drag from (.*) to (.*)$/ do |source, destination|
 end
 
 When /^I choose "([^"]*)" in the "([^"]*)" picker by moving the picker (up|down)$/ do |value, label, direction|
-  icuke_driver.drag_picker_to_value(label, direction, value)
+  icuke_driver.drag_picker_to_value(label, direction.to_sym, value)
 end
 
 When /^I select the "(.*)" slider and drag (.*) pixels (down|up|left|right)$/ do |label, distance, direction|

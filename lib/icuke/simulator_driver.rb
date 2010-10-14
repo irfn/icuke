@@ -115,7 +115,7 @@ module ICuke
       drag(x, y, dest_x, dest_y)
     end
 
-    def drag_picker_to_value(label, value)
+    def drag_picker_to_value(label, value, direction)
       element = screen.first_picker_element(label)
       require 'ruby-debug'
       debugger

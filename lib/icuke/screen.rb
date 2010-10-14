@@ -57,7 +57,7 @@ class Screen
 
   def first_picker_element(label)
     element =
-      @xml.xpath(%Q{UIAccessibilityPickerComponent[@label="#{label}" and frame]},
+      @xml.xpath(%Q{//UIAccessibilityPickerComponent[@label="#{label}" and frame]},
                  %Q{//*[@label="#{label}"]/../UIAccessibilityPickerComponent}).first
       
     raise %Q{No element labelled "#{label}" found in: #{@xml}} unless element

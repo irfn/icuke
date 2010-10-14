@@ -114,13 +114,24 @@ module ICuke
 
       drag(x, y, dest_x, dest_y)
     end
-
-    def drag_picker_to_value(label, value, direction)
-      element = screen.first_picker_element(label)
-      require 'ruby-debug'
-      debugger
-      0
+    
+    def drag_picker_to_value(label, direction, target_value)
+      loop do
+        picker = screen.first_picker_element(label)
+        actual_value = picker.attributes['value'].value
+        break if target_value == actual_value
+        one_step_distance = 25
+        x, y = screen.element_center(picker)
+        dest_x, dest_y = x, y
+        if [:up, :down].include?(direction)
+          dest_y += modifier * one_step_distance
+        else
+          dest_x += modifier * one_step_distance
+        end
+        drag(x, y, dest_x, dest_y)
+      end
     end
+
 
     def drag_slider_to_percentage(label, percentage)
       element = screen.first_slider_element(label)

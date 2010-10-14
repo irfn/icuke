@@ -10,7 +10,8 @@ module ICuke
                  :response, :record, :tap, :swipe, :drag,
                  :drag_with_source, :drag_slider_to, 
                  :drag_slider_to_percentage, :type, :scroll_to,
-                 :scroll, :set_application_defaults]
+                 :scroll, :set_application_defaults,
+                 :drag_picker_to_value]
    
     include ICuke::Simulate::Gestures
     

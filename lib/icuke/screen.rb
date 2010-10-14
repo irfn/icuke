@@ -59,7 +59,7 @@ class Screen
     element = 
       @xml.xpath(
         %Q{//UIAccessibilityPickerComponent[@label="#{label}"}
-      }.first
+      ).first
     raise %Q{No element labelled "#{label}" found in: #{@xml}} unless element
     element
   end

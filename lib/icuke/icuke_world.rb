@@ -67,7 +67,7 @@ When /^I drag from (.*) to (.*)$/ do |source, destination|
   icuke_driver.drag_with_source(source, destination)
 end
 
-When /^I choose "([^"]*)" in the "([^"]*)" picker by moving the picker (up|down)$/ do |value, picker_name, direction|
+When /^I choose "([^"]*)" in the "([^"]*)" picker by moving the picker (up|down)$/ do |value, label, direction|
   icuke_driver.drag_picker_to_value(label, direction, value)
 end
 

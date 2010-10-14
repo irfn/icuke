@@ -123,6 +123,7 @@ module ICuke
         one_step_distance = 25
         x, y = screen.element_center(picker)
         dest_x, dest_y = x, y
+        modifier = direction_modifier(direction)
         if [:up, :down].include?(direction)
           dest_y += modifier * one_step_distance
         else

@@ -56,12 +56,12 @@ class Screen
   end
 
   def first_picker_element(label)
+      require 'ruby-debug'
+      debugger
     element = 
       @xml.xpath(
         %Q{//UIAccessibilityPickerComponent[@label="#{label}]"}
       ).first
-      require 'ruby-debug'
-      debugger
     raise %Q{No element labelled "#{label}" found in: #{@xml}} unless element
     element
   end

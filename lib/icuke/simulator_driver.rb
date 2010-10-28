@@ -162,7 +162,7 @@ module ICuke
       values = picker_values(picker)
       component_value = picker_component_value(component)
       one_step_distance = 25
-      x, y = screen.element_center(target_picker_component)
+      x, y = screen.element_center(component)
       direction = picker_direction(value, component_value)
       modifier = direction_modifier(direction)
       dest_x = x

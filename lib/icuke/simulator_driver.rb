@@ -138,7 +138,7 @@ module ICuke
     end
 
     def picker_component_value(picker)
-      picker_component(picker).attributes['value'].value.match(/(.*) (\d+) of (\d+)/)[1]
+      picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
     end
 
     def picker_direction(value, component_value)

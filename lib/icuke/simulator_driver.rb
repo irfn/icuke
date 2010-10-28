@@ -115,47 +115,6 @@ module ICuke
       drag(x, y, dest_x, dest_y)
     end
   
-    def picker_values(picker)
-      index = picker_number(picker)
-      picker_tables = screen.xml.xpath("//UIPickerTable")
-      values = picker_tables.map do |picker_table|
-        picker_table.xpath("UITableCellAccessibilityElement/UITableTextAccessibilityElement/@label").map {|x| x.value }
-      end
-      values[index]
-    end
-
-    def picker_component(picker)
-      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
-      index = picker_number(picker)
-      picker_components[index]
-    end
-  
-    def picker_number(picker)
-      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
-      index = picker_components.to_ary.index do |c|
-        c.attributes["label"].value == picker
-      end
-    end
-
-    def picker_component_value(picker)
-      require 'ruby-debug'
-      debugger
-      picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
-    end
-
-    def picker_direction(value, component_value)
-      if component_value == ''
-        direction = :up
-      else
-        picker_index = picker_values.index(value)
-        component_index = picker_values.index(component_value)
-        if picker_index > component_index
-          direction = :up
-        elsif picker_index < component_index
-          direction = :down
-        end
-      end
-    end
     
     def choose_value_in_picker(value, picker)
       component = picker_component(picker)
@@ -287,6 +246,46 @@ module ICuke
     
     def configuration
       @configuration
+    end
+    
+    def picker_values(picker)
+      index = picker_number(picker)
+      picker_tables = screen.xml.xpath("//UIPickerTable")
+      values = picker_tables.map do |picker_table|
+        picker_table.xpath("UITableCellAccessibilityElement/UITableTextAccessibilityElement/@label").map {|x| x.value }
+      end
+      values[index]
+    end
+
+    def picker_component(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
+      index = picker_number(picker)
+      picker_components[index]
+    end
+  
+    def picker_number(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
+      index = picker_components.to_ary.index do |c|
+        c.attributes["label"].value == picker
+      end
+    end
+
+    def picker_component_value(picker)
+      picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
+    end
+
+    def picker_direction(value, component_value)
+      if component_value == ''
+        direction = :up
+      else
+        picker_index = picker_values.index(value)
+        component_index = picker_values.index(component_value)
+        if picker_index > component_index
+          direction = :up
+        elsif picker_index < component_index
+          direction = :down
+        end
+      end
     end
   end
 end

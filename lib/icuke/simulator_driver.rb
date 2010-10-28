@@ -137,8 +137,8 @@ module ICuke
       end
     end
 
-    def picker_component_value(picker_component)
-      picker_component.attributes['value'].value.match(/(.*) (\d+) of (\d+)/)[1]
+    def picker_component_value(picker)
+      picker_component(picker).attributes['value'].value.match(/(.*) (\d+) of (\d+)/)[1]
     end
 
     def picker_direction(value, component_value)
@@ -160,7 +160,7 @@ module ICuke
       debugger
       component = picker_component(picker)
       values = picker_values(picker)
-      component_value = picker_component_value(component)
+      component_value = picker_component_value(picker)
       one_step_distance = 25
       x, y = screen.element_center(component)
       direction = picker_direction(value, component_value)
@@ -169,7 +169,7 @@ module ICuke
       dest_y = y + (modifier * one_step_distance)
       loop do
         refresh
-        break if picker_component_value(component) == value
+        break if picker_component_value(picker) == value
         drag(x, y, dest_x, dest_y)
       end
     end

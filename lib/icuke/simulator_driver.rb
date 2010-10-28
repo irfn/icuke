@@ -11,7 +11,7 @@ module ICuke
                  :drag_with_source, :drag_slider_to, 
                  :drag_slider_to_percentage, :type, :scroll_to,
                  :scroll, :set_application_defaults,
-                 :drag_picker_to_value]
+                 :drag_picker_to_value, :choose_value_in_picker]
    
     include ICuke::Simulate::Gestures
     
@@ -114,7 +114,65 @@ module ICuke
 
       drag(x, y, dest_x, dest_y)
     end
+  
+    def picker_values(picker)
+      index = picker_number(picker)
+      picker_tables = screen.xml.xpath("//UIPickerTable")
+      values = picker_tables.map do |picker_table|
+        picker_table.xpath("UITableCellAccessibilityElement/UITableTextAccessibilityElement/@label").map {|x| x.value }
+      end
+      values[index]
+    end
+
+    def picker_component(picker)
+      index = picker_number(picker)
+      picker_components[index]
+    end
+  
+    def picker_number(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
+      index = picker_components.to_ary.index do |c|
+        c.attributes["label"].value == picker
+      end
+    end
+
+    def picker_component_value(picker_component)
+      picker_component.attributes['value'].value.match(/(.*) (\d+) of (\d+)/)[1]
+    end
+
+    def picker_direction(value, component_value)
+      if component_value == '.'
+        direction = :up
+      else
+        picker_index = picker_values.index(value)
+        component_index = picker_values.index(component_value)
+        if picker_index > component_index
+          direction = :up
+        elsif picker_index < component_index
+          direction = :down
+        end
+      end
+    end
     
+    def choose_value_in_picker(value, picker)
+      require 'ruby-debug'
+      debugger
+      component = picker_component(picker)
+      values = picker_values(picker)
+      component_value = picker_component_value(component)
+      one_step_distance = 25
+      x, y = screen.element_center(target_picker_component)
+      direction = picker_direction(value, component_value)
+      modifier = direction_modifier(direction)
+      dest_x = x
+      dest_y = y + (modifier * one_step_distance)
+      loop do
+        refresh
+        break if picker_component_value(component) == value
+        drag(x, y, dest_x, dest_y)
+      end
+    end
+
     def drag_picker_to_value(label, direction, target_value)
       loop do
         picker = screen.first_picker_element(label)

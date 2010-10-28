@@ -138,6 +138,8 @@ module ICuke
     end
 
     def picker_component_value(picker)
+      require 'ruby-debug'
+      debugger
       picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
     end
 
@@ -156,8 +158,6 @@ module ICuke
     end
     
     def choose_value_in_picker(value, picker)
-      require 'ruby-debug'
-      debugger
       component = picker_component(picker)
       values = picker_values(picker)
       component_value = picker_component_value(picker)

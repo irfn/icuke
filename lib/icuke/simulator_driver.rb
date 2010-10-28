@@ -125,6 +125,7 @@ module ICuke
     end
 
     def picker_component(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
       index = picker_number(picker)
       picker_components[index]
     end

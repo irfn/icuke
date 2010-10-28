@@ -144,7 +144,7 @@ module ICuke
     end
 
     def picker_direction(value, component_value)
-      if component_value == '.'
+      if component_value == ''
         direction = :up
       else
         picker_index = picker_values.index(value)

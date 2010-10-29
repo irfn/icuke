@@ -122,7 +122,7 @@ module ICuke
       component_value = picker_component_value(picker)
       one_step_distance = 25
       x, y = screen.element_center(component)
-      direction = picker_direction(value, component_value)
+      direction = picker_direction(picker, value, component_value)
       modifier = direction_modifier(direction)
       dest_x = x
       dest_y = y + (modifier * one_step_distance)
@@ -274,12 +274,12 @@ module ICuke
       picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
     end
 
-    def picker_direction(value, component_value)
+    def picker_direction(picker, value, component_value)
       if component_value == ''
         direction = :up
       else
-        picker_index = picker_values.index(value)
-        component_index = picker_values.index(component_value)
+        picker_index = picker_values(picker).index(value)
+        component_index = picker_values(picker).index(component_value)
         if picker_index > component_index
           direction = :up
         elsif picker_index < component_index

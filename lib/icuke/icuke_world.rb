@@ -68,10 +68,10 @@ When /^I drag from (.*) to (.*)$/ do |source, destination|
 end
 
 Then /^the "([^"]*)" picker should be set to "([^"]*)"$/ do |picker, target_value|
-  actual_value = icuke_driver.get_picker_value(picker)
-  actual_value == target_value
-end
- 
+   actual_value = icuke_driver.get_picker_value(picker)
+   raise %Q{#{picker} contains #{actual_value}. Expecting #{target_value}} if actual_value != target
+ end
+  
 When /^I choose "([^"]*)" in the "([^"]*)" picker$/ do |value, picker|
   icuke_driver.choose_value_in_picker(value, picker)
 end

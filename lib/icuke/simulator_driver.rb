@@ -115,7 +115,10 @@ module ICuke
       drag(x, y, dest_x, dest_y)
     end
   
-    
+    def get_picker_value(picker)
+      picker_component_value(picker)
+    end
+
     def choose_value_in_picker(value, picker)
       component = picker_component(picker)
       values = picker_values(picker)

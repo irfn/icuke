@@ -69,7 +69,7 @@ end
 
 Then /^the "([^"]*)" picker should be set to "([^"]*)"$/ do |picker, target_value|
    actual_value = icuke_driver.get_picker_value(picker)
-   raise %Q{#{picker} contains #{actual_value}. Expecting #{target_value}} if actual_value != target
+   raise %Q{#{picker} contains #{actual_value}. Expecting #{target_value}} if actual_value != target_value
  end
   
 When /^I choose "([^"]*)" in the "([^"]*)" picker$/ do |value, picker|

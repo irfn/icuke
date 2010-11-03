@@ -48,7 +48,6 @@ module ICuke
     end
     
     def get(path, options = {})
-      self.class.default_timeout 2
       options[:query] = URI.escape(options[:query]) if options.has_key?(:query)
       response = self.class.get(path, options)
       if response.code != 200

@@ -67,6 +67,10 @@ When /^I drag from (.*) to (.*)$/ do |source, destination|
   icuke_driver.drag_with_source(source, destination)
 end
 
+When /^I touch (.*) for (.*) seconds then drag to (.*)$/ do |source, hold_for, destination| 
+  icuke_driver.drag_with_source(source, destination, hold_for)
+end
+
 Then /^the "([^"]*)" picker should be set to "([^"]*)"$/ do |picker, target_value|
    actual_value = icuke_driver.get_picker_value(picker)
    raise %Q{#{picker} contains #{actual_value}. Expecting #{target_value}} if actual_value != target_value

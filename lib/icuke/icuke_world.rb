@@ -64,7 +64,8 @@ When /^I type "([^\"]*)" in "([^\"]*)"$/ do |text, textfield|
 end
 
 When /^I drag from (.*) to (.*)$/ do |source, destination|
-  icuke_driver.drag_with_source(source, destination)
+  hold_for = 0.15
+  icuke_driver.drag_with_source(source, destination, hold_for)
 end
 
 When /^I touch (.*) for (.*) seconds then drag to (.*)$/ do |source, hold_for, destination| 

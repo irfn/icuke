@@ -88,7 +88,7 @@ module ICuke
     end
 
     def drag(source_x, source_y, dest_x, dest_y, hold_for, options = {})
-	  hold_for = 0.15 unless hold_for
+	    hold_for = 0.15 unless hold_for
 	  @simulator.fire_event(Drag.new(source_x, source_y, dest_x, dest_y, hold_for, options))
       sleep(1)
       refresh
@@ -97,8 +97,8 @@ module ICuke
     def drag_with_source(source, destination, hold_for)
       sources = source.split(',').collect {|val| val.strip.to_i}
       destinations = destination.split(',').collect {|val| val.strip.to_i}
-	  hold_for = hold_for.to_f
-	  drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
+	    hold_for = hold_for.to_f
+	    drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
     end
 
     def drag_slider_to(label, direction, distance)
@@ -114,7 +114,7 @@ module ICuke
         dest_x += modifier * distance
       end
 
-      drag(x, y, dest_x, dest_y)
+      drag(x, y, dest_x, dest_y, 0.15)
     end
 	
 	def get_picker_value(picker)
@@ -152,7 +152,7 @@ module ICuke
         else
           dest_x += modifier * one_step_distance
         end
-        drag(x, y, dest_x, dest_y)
+        drag(x, y, dest_x, dest_y, 0.15)
       end
     end
 

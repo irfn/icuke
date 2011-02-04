@@ -159,12 +159,12 @@ class ICukeWorld
     @simulator.set_defaults(defaults)
   end
   
-  private
-  
   def refresh
     @response = nil
     @screen = nil
   end
+
+  private
 
   def swipe_direction(direction)
     swipe_directions = { :up => :down, :down => :up, :left => :right, :right => :left }

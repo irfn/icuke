@@ -11,7 +11,11 @@ module ICuke
         :env => {}
       }.merge(options)
       
-      app_name = File.basename(project_file, '.xcodeproj')
+      if(options[:target])
+        app_name = options[:target]
+      else
+        app_name = File.basename(project_file, '.xcodeproj')
+      end
       directory = "#{File.dirname(project_file)}/build/#{options[:configuration]}-iphonesimulator"
       
       options[:env]['CFFIXED_USER_HOME'] = Dir.mktmpdir

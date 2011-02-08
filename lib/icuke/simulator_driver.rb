@@ -101,6 +101,15 @@ module ICuke
 	    drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
     end
 
+    def drag_element_to_destination(label, destination, hold_for)
+      element = screen.first_tappable_element(label)
+      # ask grant about debugging and it this makes sense
+      sources = screen.element_center(element)
+      destinations = destination.split(',').collect {|val| val.strip.to_i}
+	    hold_for = hold_for.to_f
+	    drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
+    end
+
     def drag_slider_to(label, direction, distance)
       element = screen.first_slider_element(label)
       x, y = screen.find_slider_button(element)
@@ -202,15 +211,17 @@ module ICuke
          end
        end
 
-       # From UIReturnKeyType
-       # Should probably sort these in rough order of likelyhood?
-       return_keys = ['return', 'go', 'google', 'join', 'next', 'route', 'search', 'send', 'yahoo', 'done', 'emergency call']
-       return_keys.each do |key|
-         begin
-           tap(key)
-           return
-         rescue
-         end
+       if (options[:return])
+        # From UIReturnKeyType
+        # Should probably sort these in rough order of likelyhood?
+        return_keys = ['return', 'go', 'google', 'join', 'next', 'route', 'search', 'send', 'yahoo', 'done', 'emergency call']
+        return_keys.each do |key|
+          begin
+            tap(key)
+            return
+          rescue
+          end
+        end
        end
      end
 

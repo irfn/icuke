@@ -60,7 +60,13 @@ When /^I tap (\d+),(\d+)$/ do |x,y|
 end
 
 When /^I type "([^\"]*)" in "([^\"]*)"$/ do |text, textfield|
-  icuke_driver.type(textfield, text)
+  options = {:return => true}
+  icuke_driver.type(textfield, text, options)
+end
+
+When /^I type ""([^\"]*)" in "([^\"]*)" with no return$/ do |text, textfield|
+  options = {:return => false}
+  icuke_driver.type(textfield, text, options)
 end
 
 When /^I drag from (.*) to (.*)$/ do |source, destination|

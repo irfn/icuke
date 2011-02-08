@@ -64,7 +64,7 @@ When /^I type "([^\"]*)" in "([^\"]*)"$/ do |text, textfield|
   icuke_driver.type(textfield, text, options)
 end
 
-When /^I type ""([^\"]*)" in "([^\"]*)" with no return$/ do |text, textfield|
+When /^I type "([^"]*)" in "([^"]*)" without return$/ do |text, textfield|
   options = {:return => false}
   icuke_driver.type(textfield, text, options)
 end

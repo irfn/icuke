@@ -23,11 +23,15 @@ include Test::Unit::Assertions
 
 class ICukeWorld
 
-  @@timeout = 20
+  @@timeout = 30
   @@debug = false
 
   def set_debug(enable = true)
     @@debug = enable
+  end
+
+  def set_timeout(timeout = 30)
+    @@timeout = timeout
   end
 
 ## get an element
@@ -433,4 +437,82 @@ class ICukeWorld
   def method_name
     /`(.*)'/.match(caller.first).captures[0].to_sym rescue nil
   end
+
+  ##
+
+  # supported options:
+  # :type, :label, :value, :traits
+  # usage: get_all_elements(:type => "UITabBarButton", :label => "MyButton")
+  def get_all_elements(options = {})
+    puts "#{method_name}(#{options.inspect})" if @@debug
+    refresh_screen
+    query = "//"
+    if(options[:type])
+     query += options[:type]
+    end
+    if(options[:label])
+      query += "[@label=\"#{options[:label]}\"]"
+    end
+    if(options[:traits])
+      query += "[@traits=\"#{options[:traits]}\"]"
+    end
+    if(options[:value])
+     query += "[@value=\"#{options[:value]}\"]"
+    end
+    doc = REXML::Document.new(screen.xml.to_s)
+    elements = REXML::XPath.match(doc, query)
+    elements
+  end
+
+  # supported options:
+  # :type, :label, :value, :traits, :index, :timeout
+  # first index is 0
+  # usage: wait_for_element(:type => "UITabBarButton", :label => "MyButton")
+  def wait_for_element(options = {})
+    puts "#{method_name}(#{options.inspect})" if @@debug
+    index = 0
+    if(options[:index])
+      index = options[:index]
+      assert(index >= 0, "Wrong index: '#{index}'")
+    end
+    if(options[:timeout])
+      timeout = options[:timeout]
+      options.delete(:timeout)
+    else
+      timeout = @@timeout
+    end
+    refresh_screen
+    start_time = Time.now
+    until(element_exists?(options))  do
+      if Time.now - start_time > timeout
+        flunk("Timed out after #{timeout} seconds\n")
+      end
+      refresh_screen
+      sleep 0.1
+    end
+    get_all_elements(options)[index]
+  end
+
+  # supported options:
+  # :type, :label, :value, :traits, :index
+  # index is counted from 0
+  # usage: wait_for_element(:type => "UITabBarButton", :label => "MyButton", :index => 1)
+  def element_exists?(options = {})
+    puts "#{method_name}(#{options.inspect})" if @@debug
+    index = 0
+    if(options[:index])
+      index = options[:index]
+      assert(index >= 0, "Wrong index: '#{index}'")
+      options.delete(:index)
+    end
+    elements = get_all_elements(options)
+    elements.length > index
+  end
+
+  # alias for wait_for_element(options = {})
+  def get_element(options = {})
+    puts "#{method_name}(#{options.inspect})" if @@debug
+    wait_for_element(options)
+  end
+
 end

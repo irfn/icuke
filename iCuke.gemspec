@@ -137,6 +137,9 @@ Gem::Specification.new do |s|
     "features/iphone.feature",
     "features/support/env.rb",
     "iCuke.gemspec",
+    "lib/icuke/configuration.rb",
+    "lib/icuke/cucumber_compat.rb",
+    "lib/icuke/icuke_world.rb",
     "lib/icuke.rb",
     "lib/icuke/core_ext.rb",
     "lib/icuke/cucumber.rb",
@@ -145,6 +148,7 @@ Gem::Specification.new do |s|
     "lib/icuke/sdk.rb",
     "lib/icuke/simulate.rb",
     "lib/icuke/simulator.rb",
+    "lib/icuke/simulator_driver.rb",
     "lib/icuke/waxsim.rb"
   ]
   s.homepage = %q{http://github.com/unboxed/iCuke}

@@ -506,8 +506,17 @@ module ICuke
     ## refresh screen, should be used frequently
 
     def refresh_screen
-      refresh
-      screen
+      puts "#{method_name}" if @@debug
+      timeout(@@timeout) do
+        begin
+          refresh
+          screen
+        rescue Errno::ECONNREFUSED, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse => e
+          puts "#{method_name}: exception -> #{e}" if @@debug
+          sleep(0.5)
+          retry
+        end
+      end
     end
 
     private

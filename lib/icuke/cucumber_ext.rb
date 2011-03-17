@@ -106,6 +106,33 @@ module ICuke
       elements
     end
 
+    # supported options:
+    # :type, :label, :traits
+    def get_all_values(options = {})
+      puts "#{method_name}(#{options.inspect})" if @@debug
+      refresh_screen
+      query = "//"
+      if(options[:type])
+        query += options[:type]
+      end
+      if(options[:label])
+        query += "[@label=\"#{options[:label]}\"]"
+      end
+      if(options[:traits])
+        query += "[@traits=\"#{options[:traits]}\"]"
+      end
+      doc = REXML::Document.new(screen.xml.to_s)
+      root = doc.root
+      values = Array.new
+      root.elements.each(query){|el| values << el.attributes["value"]}
+      puts "#{method_name}: got #{values.inspect}" if @@debug
+      if(options[:index])
+        return values[0]
+      else
+        return values
+      end
+    end
+
 
     def get_all_elements_by_type(type)
       puts "#{method_name}(#{type})" if @@debug
@@ -233,7 +260,6 @@ module ICuke
       index = 0
       if(options[:index])
         index = options[:index]
-        assert(index >= 0, "Wrong index: '#{index}'")
       end
       if(options[:timeout])
         timeout = options[:timeout]
@@ -376,18 +402,25 @@ module ICuke
       @simulator.fire_event(ICuke::Simulate::Gestures::Tap.new(x, y))
     end
 
-    def double_tap_element(element)
+    def double_tap_element(element, delay = 0.3)
       puts "#{method_name}" if @@debug
-      x, y = get_center_of_the_element(element)
-      2.times {@simulator.fire_event(ICuke::Simulate::Gestures::Tap.new(x, y))}
+      tap_element(element)
+      sleep delay
+      tap_element(element)
+      sleep delay
+      refresh_screen
     end
 
     def tap_text(text)
       tap(text) # alias
     end
 
-    def double_tap_text(text)
-      2.times {tap(text)}
+    def double_tap_text(text, delay = 0.3)
+      tap(text)
+      sleep delay
+      tap(text)
+      sleep delay
+      refresh_screen
     end
 
 ## scrolling
@@ -478,6 +511,7 @@ module ICuke
       IO.popen('pbcopy', 'w+') {|clipboard| clipboard.write(text)}
     end
 
+    ## deprecated: use paste_clipboard((options = {}) instead
     def paste_clipboard_to_text_field(type = "UITextFieldLabel", label = "", index = 0)
       puts "#{method_name}(#{type}, #{label})" if @@debug
       IO.popen('pbpaste') {|clipboard| puts clipboard.read} if @@debug
@@ -489,6 +523,18 @@ module ICuke
       -e 'tell application \"System Events\" to keystroke \"v\" using command down' -e 'end tell'")
       wait_for_text("Paste")
       tap("Paste")
+    end
+
+    def paste_clipboard(options = {})
+      puts "#{method_name}(#{options.inspect})" if @@debug
+      element = wait_for_element(options)
+      double_tap_element(element)
+      system("osascript -e 'tell application \"iPhone Simulator\"' -e 'activate' \
+      -e 'tell application \"System Events\" to keystroke \"v\" using command down' -e 'end tell'")
+      wait_for_text("Paste")
+      tap("Paste")
+      sleep 0.3
+      refresh_screen
     end
 
 ## simulator orientation

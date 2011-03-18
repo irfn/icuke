@@ -16,7 +16,7 @@ module ICukeWorld
 end
 
 After do
-  icuke_driver.quit
+  #icuke_driver.quit
 end
 
 Given /^(?:"([^\"]*)" from )?"([^\"]*)"(?: with build configuration "([^\"]*)")? is loaded in the (?:(iphone|ipad) )?simulator(?: with SDK ([0-9.]+))?$/ do |target, project, configuration, platform, sdk_version|

@@ -107,7 +107,7 @@ module ICuke
     end
 
     # supported options:
-    # :type, :label, :traits
+    # :type, :label, :traits, :index
     def get_all_values(options = {})
       puts "#{method_name}(#{options.inspect})" if @@debug
       refresh_screen
@@ -127,7 +127,7 @@ module ICuke
       root.elements.each(query){|el| values << el.attributes["value"]}
       puts "#{method_name}: got #{values.inspect}" if @@debug
       if(options[:index])
-        return values[0]
+        return values[options[:index]]
       else
         return values
       end
@@ -529,6 +529,7 @@ module ICuke
       puts "#{method_name}(#{options.inspect})" if @@debug
       element = wait_for_element(options)
       double_tap_element(element)
+      sleep 1
       system("osascript -e 'tell application \"iPhone Simulator\"' -e 'activate' \
       -e 'tell application \"System Events\" to keystroke \"v\" using command down' -e 'end tell'")
       wait_for_text("Paste")

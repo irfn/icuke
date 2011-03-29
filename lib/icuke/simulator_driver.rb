@@ -10,7 +10,8 @@ module ICuke
                  :response, :record, :tap, :swipe, :drag,
                  :drag_with_source, :drag_slider_to, 
                  :drag_slider_to_percentage, :type, :scroll_to,
-                 :scroll, :set_application_defaults]
+                 :scroll, :set_application_defaults,
+                 :drag_picker_to_value, :choose_value_in_picker]
    
     include ICuke::Simulate::Gestures
     
@@ -52,6 +53,15 @@ module ICuke
     def record
       @simulator.record
     end
+  
+    def tap_at_point(x, y, options={})
+      options = {
+        :pause => true
+      }.merge(options)
+      @simulator.fire_event(Tap.new(x,y,options))
+      sleep(options[:pause] ? 2 : 0.2)
+      refresh
+    end
 
     def tap(label, options = {}, &block)
       options = {
@@ -77,16 +87,27 @@ module ICuke
       refresh
     end
 
-    def drag(source_x, source_y, dest_x, dest_y, options = {})
-      @simulator.fire_event(Drag.new(source_x, source_y, dest_x, dest_y, 0.15, options))
+    def drag(source_x, source_y, dest_x, dest_y, hold_for, options = {})
+	    hold_for = 0.15 unless hold_for
+	  @simulator.fire_event(Drag.new(source_x, source_y, dest_x, dest_y, hold_for, options))
       sleep(1)
       refresh
     end
 
-    def drag_with_source(source, destination)
+    def drag_with_source(source, destination, hold_for)
       sources = source.split(',').collect {|val| val.strip.to_i}
       destinations = destination.split(',').collect {|val| val.strip.to_i}
-      drag(sources[0], sources[1], destinations[0], destinations[1])
+	    hold_for = hold_for.to_f
+	    drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
+    end
+
+    def drag_element_to_destination(label, destination, hold_for)
+      element = screen.first_tappable_element(label)
+      # ask grant about debugging and it this makes sense
+      sources = screen.element_center(element)
+      destinations = destination.split(',').collect {|val| val.strip.to_i}
+	    hold_for = hold_for.to_f
+	    drag(sources[0], sources[1], destinations[0], destinations[1], hold_for)
     end
 
     def drag_slider_to(label, direction, distance)
@@ -102,8 +123,48 @@ module ICuke
         dest_x += modifier * distance
       end
 
-      drag(x, y, dest_x, dest_y)
+      drag(x, y, dest_x, dest_y, 0.15)
     end
+	
+	def get_picker_value(picker)
+      picker_component_value(picker)
+    end
+
+    def choose_value_in_picker(value, picker)
+      component = picker_component(picker)
+      values = picker_values(picker)
+      component_value = picker_component_value(picker)
+      one_step_distance = 25
+      x, y = screen.element_center(component)
+      direction = picker_direction(picker, value, component_value)
+      modifier = direction_modifier(direction)
+      dest_x = x
+      dest_y = y + (modifier * one_step_distance)
+      loop do
+        refresh
+        break if picker_component_value(picker) == value
+        drag(x, y, dest_x, dest_y)
+      end
+    end
+
+    def drag_picker_to_value(label, direction, target_value)
+      loop do
+        picker = screen.first_picker_element(label)
+        actual_value = picker.attributes['value'].value
+        break if target_value == actual_value
+        one_step_distance = 25
+        x, y = screen.element_center(picker)
+        dest_x, dest_y = x, y
+        modifier = direction_modifier(direction)
+        if [:up, :down].include?(direction)
+          dest_y += modifier * one_step_distance
+        else
+          dest_x += modifier * one_step_distance
+        end
+        drag(x, y, dest_x, dest_y, 0.15)
+      end
+    end
+
 
     def drag_slider_to_percentage(label, percentage)
       element = screen.first_slider_element(label)
@@ -113,52 +174,57 @@ module ICuke
     end
 
     def type(textfield, text, options = {})
-      tap(textfield, :hold_for => 0.75) do |field|
-        if field['value']
-          tap('Select All')
-          tap('Delete')
-        end
-      end
+       unless textfield == '' || textfield.nil?
+         tap(textfield, :hold_for => 0.75) do |field|
+           if field['value']
+             tap('Select All')
+             tap('Delete')
+           end
+         end
+       end
+       
+       # Without this sleep fields which have auto-capitilisation/correction can
+       # miss the first keystroke for some reason.
+       sleep(0.3)
+       
+       text.split('').each do |c|
+         begin
+           tap(c == ' ' ? 'space' : c, :pause => false)
+         rescue Exception => e
+           try_keyboards =
+             case c
+             when /[a-zA-Z]/
+               ['more, letters', 'shift']
+             when /[0-9]/
+               ['more, numbers']
+             else
+               ['more, numbers', 'more, symbols']
+             end
+           until try_keyboards.empty?
+             begin
+               tap(try_keyboards.shift, :pause => false)
+               retry
+             rescue
+             end
+           end
+           raise e
+         end
+       end
 
-      # Without this sleep fields which have auto-capitilisation/correction can
-      # miss the first keystroke for some reason.
-      sleep(0.5)
-
-      text.split('').each do |c|
-        begin
-          tap(c == ' ' ? 'space' : c, :pause => false)
-        rescue Exception => e
-          try_keyboards =
-            case c
-            when /[a-zA-Z]/
-              ['more, letters', 'shift']
-            when /[0-9]/
-              ['more, numbers']
-            else
-              ['more, numbers', 'more, symbols']
-            end
-          until try_keyboards.empty?
-            begin
-              tap(try_keyboards.shift, :pause => false)
-              retry
-            rescue
-            end
+       if (options[:return])
+        # From UIReturnKeyType
+        # Should probably sort these in rough order of likelyhood?
+        return_keys = ['return', 'go', 'google', 'join', 'next', 'route', 'search', 'send', 'yahoo', 'done', 'emergency call']
+        return_keys.each do |key|
+          begin
+            tap(key)
+            return
+          rescue
           end
-          raise e
         end
-      end
+       end
+     end
 
-      # From UIReturnKeyType
-      # Should probably sort these in rough order of likelyhood?
-      return_keys = ['return', 'go', 'google', 'join', 'next', 'route', 'search', 'send', 'yahoo', 'done', 'emergency call']
-      return_keys.each do |key|
-        begin
-          tap(key)
-          return
-        rescue
-        end
-      end
-    end
 
     def scroll_to(text, options = {})
       x, y, x2, y2 = screen.swipe_coordinates(swipe_direction(options[:direction]))
@@ -196,6 +262,46 @@ module ICuke
     
     def configuration
       @configuration
+    end
+    
+    def picker_values(picker)
+      index = picker_number(picker)
+      picker_tables = screen.xml.xpath("//UIPickerTable")
+      values = picker_tables.map do |picker_table|
+        picker_table.xpath("UITableCellAccessibilityElement/UITableTextAccessibilityElement/@label").map {|x| x.value }
+      end
+      values[index]
+    end
+
+    def picker_component(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
+      index = picker_number(picker)
+      picker_components[index]
+    end
+  
+    def picker_number(picker)
+      picker_components = screen.xml.xpath("//UIAccessibilityPickerComponent")
+      index = picker_components.to_ary.index do |c|
+        c.attributes["label"].value == picker
+      end
+    end
+
+    def picker_component_value(picker)
+      picker_component(picker).attributes['value'].value.match(/(.*)\. (\d+) of (\d+)/)[1]
+    end
+
+    def picker_direction(picker, value, component_value)
+      if component_value == ''
+        direction = :up
+      else
+        picker_index = picker_values(picker).index(value)
+        component_index = picker_values(picker).index(component_value)
+        if picker_index > component_index
+          direction = :up
+        elsif picker_index < component_index
+          direction = :down
+        end
+      end
     end
   end
 end

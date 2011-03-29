@@ -43,23 +43,51 @@ Given /^the module "([^\"]*)" is loaded in the simulator$/ do |path|
 end
 
 Then /^I should see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, scope|
-  raise %Q{Content "#{text}" not found in: #{screen.xml}} unless icuke_driver.screen.visible?(text, scope)
+  raise %Q{Content "#{text}" not found in: #{icuke_driver.screen.xml}} unless icuke_driver.screen.visible?(text, scope)
 end
 
 Then /^I should not see "([^\"]*)"(?: within "([^\"]*)")?$/ do |text, scope|
-  raise %Q{Content "#{text}" was found but was not expected in: #{screen.xml}} if icuke_driver.screen.visible?(text, scope)
+  raise %Q{Content "#{text}" was found but was not expected in: #{icuke_driver.screen.xml}} if icuke_driver.screen.visible?(text, scope)
 end
 
 When /^I tap "([^\"]*)"$/ do |label|
   icuke_driver.tap(label)
 end
 
+When /^I tap (\d+),(\d+)$/ do |x,y|
+  icuke_driver.tap_at_point(x.to_i, y.to_i)
+end
+
 When /^I type "([^\"]*)" in "([^\"]*)"$/ do |text, textfield|
-  icuke_driver.type(textfield, text)
+  options = {:return => true}
+  icuke_driver.type(textfield, text, options)
+end
+
+When /^I type "([^"]*)" in "([^"]*)" without return$/ do |text, textfield|
+  options = {:return => false}
+  icuke_driver.type(textfield, text, options)
 end
 
 When /^I drag from (.*) to (.*)$/ do |source, destination|
-  icuke_driver.drag_with_source(source, destination)
+  hold_for = 0.15
+  icuke_driver.drag_with_source(source, destination, hold_for)
+end
+
+When /^I touch (.*) for (.*) seconds then drag to (.*)$/ do |source, hold_for, destination| 
+  icuke_driver.drag_with_source(source, destination, hold_for)
+end
+
+Then /^the "([^"]*)" picker should be set to "([^"]*)"$/ do |picker, target_value|
+   actual_value = icuke_driver.get_picker_value(picker)
+   raise %Q{#{picker} contains #{actual_value}. Expecting #{target_value}} if actual_value != target_value
+ end
+  
+When /^I choose "([^"]*)" in the "([^"]*)" picker$/ do |value, picker|
+  icuke_driver.choose_value_in_picker(value, picker)
+end
+ 
+When /^I choose "([^"]*)" in the "([^"]*)" picker by moving the picker (up|down)$/ do |value, label, direction|
+  icuke_driver.drag_picker_to_value(label, direction.to_sym, value)
 end
 
 When /^I select the "(.*)" slider and drag (.*) pixels (down|up|left|right)$/ do |label, distance, direction|

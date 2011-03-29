@@ -55,6 +55,15 @@ class Screen
     element
   end
 
+  def first_picker_element(label)
+    element =
+      @xml.xpath(%Q{//UIAccessibilityPickerComponent[@label="#{label}" and frame]},
+                 %Q{//*[@label="#{label}"]/../UIAccessibilityPickerComponent}).first
+      
+    raise %Q{No element labelled "#{label}" found in: #{@xml}} unless element
+    element
+  end
+
   def find_slider_button(element)
     percentage = 0.01 * element['value'].to_f
     calculate_percentage_with_adjustment(element.child, percentage)

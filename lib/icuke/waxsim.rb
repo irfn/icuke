@@ -4,7 +4,7 @@ require 'tmpdir'
 module ICuke
   class Simulator
     include Timeout
-    
+
     attr_accessor :current_process
     
     def launch(process)
@@ -25,7 +25,7 @@ module ICuke
       timeout(30) do
         begin
           view
-        rescue Errno::ECONNREFUSED, Errno::ECONNRESET, EOFError
+        rescue Errno::ECONNREFUSED, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse
           sleep(0.5)
           retry
         end

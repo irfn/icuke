@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{iCuke}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Rob Holland"]
@@ -16,14 +16,14 @@ Gem::Specification.new do |s|
   s.extensions = ["ext/Rakefile"]
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.rdoc"
+    "Readme.markdown"
   ]
   s.files = [
     ".gitignore",
     ".gitmodules",
     "History.txt",
     "LICENSE",
-    "README.rdoc",
+    "Readme.markdown",
     "Rakefile",
     "VERSION",
     "app/.gitignore",
@@ -137,13 +137,18 @@ Gem::Specification.new do |s|
     "features/iphone.feature",
     "features/support/env.rb",
     "iCuke.gemspec",
+    "lib/icuke/configuration.rb",
+    "lib/icuke/cucumber_compat.rb",
+    "lib/icuke/icuke_world.rb",
     "lib/icuke.rb",
     "lib/icuke/core_ext.rb",
     "lib/icuke/cucumber.rb",
+    "lib/icuke/cucumber_ext.rb",
     "lib/icuke/screen.rb",
     "lib/icuke/sdk.rb",
     "lib/icuke/simulate.rb",
     "lib/icuke/simulator.rb",
+    "lib/icuke/simulator_driver.rb",
     "lib/icuke/waxsim.rb"
   ]
   s.homepage = %q{http://github.com/unboxed/iCuke}

@@ -22,6 +22,14 @@ Write some scenarios like:
       When I tap "About"
       Then I should see "Author:"
 
+If you want to use some extra functions from cucumber_ext:
+
+    require 'icuke/cucumber_ext'
+
+    instead of
+
+    require 'icuke/cucumber'
+
 How it works
 ------------
 
